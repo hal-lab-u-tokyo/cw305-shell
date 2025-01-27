@@ -5,7 +5,7 @@
 //    Project:       cw305-shell
 //    Author:        Takuya Kojima in The University of Tokyo (tkojima@hal.ipc.i.u-tokyo.ac.jp)
 //    Created Date:  23-01-2025 07:02:04
-//    Last Modified: 23-01-2025 07:02:06
+//    Last Modified: 27-01-2025 09:42:42
 //
 
 `timescale 1 ns / 1 ps
@@ -29,6 +29,7 @@ module usb_interface_v1_0 #
 ) (
 	// Users to add ports here
 	input wire sys_clk,
+	input wire sys_clk_reset_n,
 	inout wire [`BYTE_B] usb_data,
 	input wire [`FLIT_W-`BYTE_W-1:0] usb_addr,
 	input wire usb_rd_n,
@@ -161,7 +162,8 @@ module usb_interface_v1_0 #
 	);
 
 	cdc_pulse cdc_pulse_inst (
-		.reset_n(m00_axi_aresetn),
+		.src_reset_n(m00_axi_aresetn),
+		.dst_reset_n(sys_clk_reset_n),
 		.clk_src(m00_axi_aclk),
 		.src_pulse(usb_trigger),
 		.clk_dst(sys_clk),

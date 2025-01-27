@@ -138,6 +138,20 @@ set_input_delay -clock usb_clk -add_delay 2.000 [get_ports USB_DATA]
 set_input_delay -clock usb_clk -add_delay 2.000 [get_ports USB_RD_N]
 set_input_delay -clock usb_clk -add_delay 2.000 [get_ports USB_CE_N]
 set_input_delay -clock usb_clk -add_delay 2.000 [get_ports USB_WR_N]
+set_input_delay -clock usb_clk -add_delay 2.000 [get_ports USB_TRIGGER]
+set_input_delay -clock usb_clk -add_delay 0.5 [get_ports RESET_N]
+set_input_delay -add_delay 0.0 [get_ports DIP]
+
+set_output_delay -add_delay 0.0 [get_ports USB_DATA]
+set_output_delay -add_delay 0.0 [get_ports TIO1]
+set_output_delay -add_delay 0.0 [get_ports TIO2]
+set_output_delay -add_delay 0.0 [get_ports TIO3]
+set_output_delay -add_delay 0.0 [get_ports TIO4]
+set_output_delay -add_delay 0.0 [get_ports LED]
+
+set_false_path -to [get_ports USB_DATA]
+set_false_path -to [get_ports LED]
+set_false_path -from [get_ports DIP]
 
 
 set_property BITSTREAM.CONFIG.USR_ACCESS TIMESTAMP [current_design]

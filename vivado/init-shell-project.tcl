@@ -5,7 +5,7 @@
 #    Project:       cw305-shell
 #    Author:        Takuya Kojima in The University of Tokyo (tkojima@hal.ipc.i.u-tokyo.ac.jp)
 #    Created Date:  23-01-2025 07:17:57
-#    Last Modified: 23-01-2025 16:27:33
+#    Last Modified: 27-01-2025 09:46:48
 #
 
 
@@ -227,7 +227,7 @@ proc create_root_design { parentCell } {
 	connect_bd_net -net axi_gpio_gpio2_io_o [get_bd_pins axi_gpio/gpio2_io_o] [get_bd_ports LED]
 	connect_bd_net -net sys_clk_1 [get_bd_pins pll/clk_out1] [get_bd_pins rst_sys_clk/slowest_sync_clk] [get_bd_pins usb_interface_0/sys_clk] [get_bd_pins axi_gpio/s_axi_aclk] [get_bd_pins usb_interface_0_axi_periph/ACLK] [get_bd_pins usb_interface_0_axi_periph/M00_ACLK]
 	connect_bd_net -net rst_usb_clk_peripheral_aresetn [get_bd_pins rst_usb_clk/peripheral_aresetn] [get_bd_pins usb_interface_0/m00_axi_aresetn] [get_bd_pins usb_interface_0_axi_periph/S00_ARESETN]
-	connect_bd_net -net rst_sys_clk_peripheral_aresetn [get_bd_pins rst_sys_clk/peripheral_aresetn] [get_bd_pins axi_gpio/s_axi_aresetn] [get_bd_pins usb_interface_0_axi_periph/M00_ARESETN] [get_bd_pins usb_interface_0_axi_periph/ARESETN]
+	connect_bd_net -net rst_sys_clk_peripheral_aresetn [get_bd_pins rst_sys_clk/peripheral_aresetn] [get_bd_pins axi_gpio/s_axi_aresetn] [get_bd_pins usb_interface_0_axi_periph/M00_ARESETN] [get_bd_pins usb_interface_0_axi_periph/ARESETN] [get_bd_pins usb_interface_0/sys_clk_reset_n]
 	connect_bd_net -net usb_interface_0_external_trigger [get_bd_pins usb_interface_0/external_trigger]
 	connect_bd_net -net usb_interface_0_sw_reset_n [get_bd_pins usb_interface_0/sw_reset_n] [get_bd_pins rst_sys_clk/aux_reset_in]
 	connect_bd_net -net fixed_ready_signal [get_bd_pins const_trig_ready/dout] [get_bd_pins usb_interface_0/trigger_ready]

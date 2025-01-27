@@ -5,13 +5,14 @@
 //    Project:       cw305-shell
 //    Author:        Takuya Kojima in The University of Tokyo (tkojima@hal.ipc.i.u-tokyo.ac.jp)
 //    Created Date:  23-01-2025 07:01:25
-//    Last Modified: 23-01-2025 07:01:27
+//    Last Modified: 27-01-2025 09:42:02
 //
 
 module cdc_pulse #(
 	parameter SYNC_DEPTH = 2
 )(
-	input wire reset_n,
+	input wire src_reset_n,
+	input wire dst_reset_n,
 	// src channel
 	input wire clk_src,
 	input wire src_pulse,
@@ -27,7 +28,7 @@ module cdc_pulse #(
 	cdc_pulse_sender #(
 		.SYNC_DEPTH(SYNC_DEPTH)
 	) sender0 (
-		.reset_n(reset_n),
+		.reset_n(src_reset_n),
 		.clk(clk_src),
 		.i_pulse(src_pulse),
 		.o_async_req(w_async_req),
@@ -37,7 +38,7 @@ module cdc_pulse #(
 	cdc_pulse_receiver #(
 		.SYNC_DEPTH(SYNC_DEPTH)
 	) receiver0 (
-		.reset_n(reset_n),
+		.reset_n(dst_reset_n),
 		.clk(clk_dst),
 		.o_pulse(dst_pulse),
 		.i_ready(dst_ready),
