@@ -14,10 +14,10 @@ set_property -dict {PACKAGE_PIN T2 DRIVE 8 IOSTANDARD LVCMOS33} [get_ports LED[2
 ############################
 ####    User switches   ####
 ############################
-set_property -dict {PACKAGE_PIN J16  IOSTANDARD LVCMOS33} [get_ports DIP[0]];	# IO_L23N_T3_FWE_B_15
-set_property -dict {PACKAGE_PIN K16  IOSTANDARD LVCMOS33} [get_ports DIP[1]];	# IO_L2N_T0_D03_14
-set_property -dict {PACKAGE_PIN K15  IOSTANDARD LVCMOS33} [get_ports DIP[2]];	# IO_L2P_T0_D02_14
-set_property -dict {PACKAGE_PIN L14  IOSTANDARD LVCMOS33} [get_ports DIP[3]];	# IO_L4P_T0_D04_14
+# set_property -dict {PACKAGE_PIN J16  IOSTANDARD LVCMOS33} [get_ports DIP[0]];	# IO_L23N_T3_FWE_B_15
+# set_property -dict {PACKAGE_PIN K16  IOSTANDARD LVCMOS33} [get_ports DIP[1]];	# IO_L2N_T0_D03_14
+# set_property -dict {PACKAGE_PIN K15  IOSTANDARD LVCMOS33} [get_ports DIP[2]];	# IO_L2P_T0_D02_14
+# set_property -dict {PACKAGE_PIN L14  IOSTANDARD LVCMOS33} [get_ports DIP[3]];	# IO_L4P_T0_D04_14
 set_property -dict {PACKAGE_PIN R1  IOSTANDARD LVCMOS33}  [get_ports RESET_N];		# IO_L7N_T1_34
 
 ############################
