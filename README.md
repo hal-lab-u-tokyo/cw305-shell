@@ -58,7 +58,7 @@ target.setup()
 # Example: LED control with high-level API
 target.fpga_led_on(CW305Shell.LED_COLOR.BLUE)
 
-# Example: Same operation with low-level API
+# Example: Same way as the low-level API
 led_addr = target.memmap.axi_gpio.base + 0x8
 target.fpga_write(led_addr, 1)
 
@@ -74,7 +74,7 @@ Detailed information about each example is available in the [submodule repositor
 
 `examples` directory includes scripts to create block designs with the cryptographic modules.
 
-### RTL implementation of AES 128-bit encryption
+### RTL implementations of AES 128-bit encryption
 
 After creating a project with the template, as described above, you can create a block design by running the following command in the Vivado Tcl console.
 ```tcl
@@ -83,10 +83,13 @@ source <path to this repo>/examples/aes128_aist_rtl/create_bd.tcl
 
 To run the encryption with the design, please use `CW305ShellExampleAES128BitRTL` class in the ChipWhisperer Plugin.
 
-Another RTL implementation of AES 128-bit encryption is available in `examples/aes128_googlevault_rtl`.
-The same class `CW305ShellExampleAES128BitRTL` can be used to run the encryption with the design but don't forget to set `implementation="google"` argument when `con` method is called.
+Another RTL implementation of AES 128-bit encryption is available in `examples/aes128_googlevault_rtl` and `examples/aes128_rsm_rtl`.
+For aes128_rsm_rtl, you need to generate mask tables by running a setup script `setup_ip.sh` in the directory.
+Detailed instructions are also available in the [submodule repository](https://github.com/hal-lab-u-tokyo/sca_design_repo).
 
-### HLS implementation of AES 128-bit encryption
+The same class `CW305ShellExampleAES128BitRTL` can be used to run the encryption with the design but don't forget to set `implementation="google"` or `implementation="rsm"` argument when `con` method is called.
+
+### HLS implementations of AES 128-bit encryption
 
 First, you need to create an IP package from the HLS source code.
 In `examples/aes128_hls` directory, a script to create an IP package is available.
