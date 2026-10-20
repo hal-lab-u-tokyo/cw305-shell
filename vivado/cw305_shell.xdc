@@ -7,17 +7,17 @@ set_property CONFIG_VOLTAGE 3.3 [current_design]
 ############################
 ####        LEDs        ####
 ############################
-set_property -dict {PACKAGE_PIN T4 DRIVE 8 IOSTANDARD LVCMOS33} [get_ports LED[0]]; # IO_L9P_T1_DQS_34; LED6 (BLUE, right most)
-set_property -dict {PACKAGE_PIN T3 DRIVE 8 IOSTANDARD LVCMOS33} [get_ports LED[1]]; # IO_L9N_T1_DQS_34; LED5 (GREEN, center)
-set_property -dict {PACKAGE_PIN T2 DRIVE 8 IOSTANDARD LVCMOS33} [get_ports LED[2]]; # IO_L8N_T1_34; LED7 (RED, left most)
+set_property -dict {PACKAGE_PIN T4 DRIVE 8 IOSTANDARD LVCMOS33} [get_ports USR_LED[0]]; # IO_L9P_T1_DQS_34; LED6 (BLUE, right most)
+set_property -dict {PACKAGE_PIN T3 DRIVE 8 IOSTANDARD LVCMOS33} [get_ports USR_LED[1]]; # IO_L9N_T1_DQS_34; LED5 (GREEN, center)
+set_property -dict {PACKAGE_PIN T2 DRIVE 8 IOSTANDARD LVCMOS33} [get_ports USR_LED[2]]; # IO_L8N_T1_34; LED7 (RED, left most)
 
 ############################
 ####    User switches   ####
 ############################
-# set_property -dict {PACKAGE_PIN J16  IOSTANDARD LVCMOS33} [get_ports DIP[0]];	# IO_L23N_T3_FWE_B_15
-# set_property -dict {PACKAGE_PIN K16  IOSTANDARD LVCMOS33} [get_ports DIP[1]];	# IO_L2N_T0_D03_14
-# set_property -dict {PACKAGE_PIN K15  IOSTANDARD LVCMOS33} [get_ports DIP[2]];	# IO_L2P_T0_D02_14
-# set_property -dict {PACKAGE_PIN L14  IOSTANDARD LVCMOS33} [get_ports DIP[3]];	# IO_L4P_T0_D04_14
+set_property -dict {PACKAGE_PIN J16  IOSTANDARD LVCMOS33} [get_ports USR_DIP[0]];	# IO_L23N_T3_FWE_B_15
+set_property -dict {PACKAGE_PIN K16  IOSTANDARD LVCMOS33} [get_ports USR_DIP[1]];	# IO_L2N_T0_D03_14
+set_property -dict {PACKAGE_PIN K15  IOSTANDARD LVCMOS33} [get_ports USR_DIP[2]];	# IO_L2P_T0_D02_14
+set_property -dict {PACKAGE_PIN L14  IOSTANDARD LVCMOS33} [get_ports USR_DIP[3]];	# IO_L4P_T0_D04_14
 set_property -dict {PACKAGE_PIN R1  IOSTANDARD LVCMOS33}  [get_ports RESET_N];		# IO_L7N_T1_34
 
 ############################
@@ -65,15 +65,18 @@ set_property -dict {PACKAGE_PIN N13 IOSTANDARD LVCMOS33} [get_ports PLL_CLK1];	#
 ############################
 ####    Target Header   ####
 ############################
-# set_property -dict {PACKAGE_PIN M16 IOSTANDARD LVCMOS33} [get_ports TIO_HS1];	# IO_L7P_T1_D09_14;   clock out to chipwhisperer
-# set_property -dict {PACKAGE_PIN N14 IOSTANDARD LVCMOS33} [get_ports TIO_HS2];	# IO_L12P_T1_MRCC_14; clock in from chipwhisperer
-set_property -dict {PACKAGE_PIN P16 IOSTANDARD LVCMOS33} [get_ports TIO1];		# IO_L8N_T1_D12_14
-set_property -dict {PACKAGE_PIN R16 IOSTANDARD LVCMOS33} [get_ports TIO2];		# IO_L9N_T1_DQS_D13_14
-set_property -dict {PACKAGE_PIN T15 IOSTANDARD LVCMOS33} [get_ports TIO3];		# IO_L10N_T1_D15_14
-set_property -dict {PACKAGE_PIN T14 IOSTANDARD LVCMOS33} [get_ports TIO4];		# IO_L10P_T1_D14_14
-# set_property -dict {PACKAGE_PIN N16 IOSTANDARD LVCMOS33} [get_ports TIO_PMISO];	# IO_L7N_T1_D10_14
-# set_property -dict {PACKAGE_PIN R15 IOSTANDARD LVCMOS33} [get_ports TIO_CS];	# IO_L9P_T1_DQS_14
-# set_property -dict {PACKAGE_PIN P15 IOSTANDARD LVCMOS33} [get_ports TIO_PSCK];	# IO_L7N_T1_D10_14
+# set_property -dict {PACKAGE_PIN M16 IOSTANDARD LVCMOS33} [get_ports CWIO_HS1];	# IO_L7P_T1_D09_14;   clock out to chipwhisperer
+# set_property -dict {PACKAGE_PIN N14 IOSTANDARD LVCMOS33} [get_ports CWIO_HS2];	# IO_L12P_T1_MRCC_14; clock in from chipwhisperer
+set_property -dict {PACKAGE_PIN P16 IOSTANDARD LVCMOS33} [get_ports CWIO_TIO1];		# IO_L8N_T1_D12_14
+set_property -dict {PACKAGE_PIN R16 IOSTANDARD LVCMOS33} [get_ports CWIO_TIO2];		# IO_L9N_T1_DQS_D13_14
+set_property -dict {PACKAGE_PIN T15 IOSTANDARD LVCMOS33} [get_ports CWIO_TIO3];		# IO_L10N_T1_D15_14
+set_property -dict {PACKAGE_PIN T14 IOSTANDARD LVCMOS33} [get_ports CWIO_TIO4];		# IO_L10P_T1_D14_14
+# set_property -dict {PACKAGE_PIN N16 IOSTANDARD LVCMOS33} [get_ports CWIO_MISO];	# IO_L7N_T1_D10_14
+# PMOSI is not connected on CW305
+# CWIO_RESET_N is not connected on CW305
+# PDID is not connected on CW305, PDIC is named as CWIO_CS
+# set_property -dict {PACKAGE_PIN R15 IOSTANDARD LVCMOS33} [get_ports CWIO_CS];	# IO_L9P_T1_DQS_14
+# set_property -dict {PACKAGE_PIN P15 IOSTANDARD LVCMOS33} [get_ports CWIO_TSCK];	# IO_L8P_T1_D11_14
 
 ############################
 ####    USB Interface   ####
@@ -142,14 +145,14 @@ set_input_delay -clock usb_clk -add_delay 2.000 [get_ports USB_TRIGGER]
 set_input_delay -clock usb_clk -add_delay 0.5 [get_ports RESET_N]
 
 set_output_delay -add_delay 0.0 [get_ports USB_DATA]
-set_output_delay -add_delay 0.0 [get_ports TIO1]
-set_output_delay -add_delay 0.0 [get_ports TIO2]
-set_output_delay -add_delay 0.0 [get_ports TIO3]
-set_output_delay -add_delay 0.0 [get_ports TIO4]
-set_output_delay -add_delay 0.0 [get_ports LED]
+set_output_delay -add_delay 0.0 [get_ports CWIO_TIO1]
+set_output_delay -add_delay 0.0 [get_ports CWIO_TIO2]
+set_output_delay -add_delay 0.0 [get_ports CWIO_TIO3]
+set_output_delay -add_delay 0.0 [get_ports CWIO_TIO4]
+set_output_delay -add_delay 0.0 [get_ports USR_LED]
 
 set_false_path -to [get_ports USB_DATA]
-set_false_path -to [get_ports LED]
+set_false_path -to [get_ports USR_LED]
 
 set_property BITSTREAM.CONFIG.USR_ACCESS TIMESTAMP [current_design]
 

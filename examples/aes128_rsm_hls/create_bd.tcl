@@ -1,3 +1,12 @@
+#
+#    Copyright (C) 2026 University of Tsukuba
+#    
+#    File:          /examples/aes128_rsm_hls/create_bd.tcl
+#    Project:       cw305-shell
+#    Author:        Takuya Kojima in University of Tsukuba (tkojima@lila.cs.tsukuba.ac.jp)
+#    Created Date:  20-10-2026 21:01:14
+#    Last Modified: 20-10-2026 21:01:15
+#
 
 variable design_name
 set design_name main
@@ -98,7 +107,7 @@ connect_bd_net -net axi_bram_ctrl_0_bram_clk_a [get_bd_pins axi_bram_ctrl_0/bram
 
 connect_bd_net -net axi_bram_ctrl_0_bram_douta [get_bd_pins axi_bram_ctrl_0_bram/douta] [get_bd_pins axi_bram_ctrl_0/bram_rddata_a]
 
-connect_bd_net -net axi_bram_ctrl_0_bram_en_a [get_bd_pins axi_bram_ctrl_0/bram_en_a] [get_bd_pins axi_bram_ctrl_0_bram/ena] [get_bd_ports TIO4]
+connect_bd_net -net axi_bram_ctrl_0_bram_en_a [get_bd_pins axi_bram_ctrl_0/bram_en_a] [get_bd_pins axi_bram_ctrl_0_bram/ena] [get_bd_ports CWIO_TIO4]
 
 connect_bd_net -net axi_bram_ctrl_0_bram_rst_a [get_bd_pins axi_bram_ctrl_0/bram_rst_a] [get_bd_pins axi_bram_ctrl_0_bram/rsta]
 
@@ -107,7 +116,7 @@ connect_bd_net -net axi_bram_ctrl_0_bram_we_a [get_bd_pins axi_bram_ctrl_0/bram_
 connect_bd_net -net axi_bram_ctrl_0_bram_wrdata_a [get_bd_pins axi_bram_ctrl_0/bram_wrdata_a] [get_bd_pins axi_bram_ctrl_0_bram/dina]
 
 # Create address segments
-assign_bd_address -offset 0x40000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces usb_interface_0/M00_AXI] [get_bd_addr_segs axi_led/S_AXI/Reg] -force
+assign_bd_address -offset 0x40000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces usb_interface_0/M00_AXI] [get_bd_addr_segs axi_usr_dip_led/S_AXI/Reg] -force
 assign_bd_address -offset 0x80000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces usb_interface_0/M00_AXI] [get_bd_addr_segs RSM_AES128Encrypt_0/s_axi_control/Reg] -force
 assign_bd_address -offset 0xC0000000 -range 0x00002000 -target_address_space [get_bd_addr_spaces usb_interface_0/M00_AXI] [get_bd_addr_segs axi_bram_ctrl_1/S_AXI/Mem0] -force
 assign_bd_address -offset 0xC0000000 -range 0x00002000 -target_address_space [get_bd_addr_spaces RSM_AES128Encrypt_0/Data_m_axi_data] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force

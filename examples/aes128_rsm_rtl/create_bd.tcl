@@ -1,3 +1,14 @@
+#
+#    Copyright (C) 2026 University of Tsukuba
+#    
+#    File:          /examples/aes128_rsm_rtl/create_bd.tcl
+#    Project:       cw305-shell
+#    Author:        Takuya Kojima in University of Tsukuba (tkojima@lila.cs.tsukuba.ac.jp)
+#    Created Date:  20-10-2026 21:01:29
+#    Last Modified: 20-10-2026 21:01:29
+#
+
+
 variable design_name
 set design_name main
 
@@ -65,7 +76,7 @@ set rst_sys_clk [ get_bd_cells rst_sys_clk ]
 connect_bd_intf_net -intf_net usb_interface_0_axi_periph_M01_AXI [get_bd_intf_pins usb_interface_0_axi_periph/M01_AXI] [get_bd_intf_pins aes_rtl_core_0/S_AXI]
 
 # port connections
-connect_bd_net -net aes_rtl_core_0_o_running [get_bd_pins aes_rtl_core_0/o_running] [get_bd_ports TIO4]
+connect_bd_net -net aes_rtl_core_0_o_running [get_bd_pins aes_rtl_core_0/o_running] [get_bd_ports CWIO_TIO4]
 
 # connect nets
 connect_bd_net [get_bd_pins pll/clk_out1] [get_bd_pins usb_interface_0_axi_periph/M01_ACLK] [get_bd_pins rst_sys_clk/slowest_sync_clk] [get_bd_pins aes_rtl_core_0/s_axi_aclk]

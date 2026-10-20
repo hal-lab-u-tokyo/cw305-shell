@@ -1,0 +1,5 @@
+.vscode
+vivado*.jou
+vivado*.log
+vivado*.str
+.Xil

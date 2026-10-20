@@ -1,11 +1,11 @@
 #
-#    Copyright (C) 2025 The University of Tokyo
+#    Copyright (C) 2026 University of Tsukuba
 #    
 #    File:          /vivado/init-shell-project.tcl
 #    Project:       cw305-shell
-#    Author:        Takuya Kojima in The University of Tokyo (tkojima@hal.ipc.i.u-tokyo.ac.jp)
-#    Created Date:  23-01-2025 07:17:57
-#    Last Modified: 01-03-2025 10:24:11
+#    Author:        Takuya Kojima in University of Tsukuba (tkojima@lila.cs.tsukuba.ac.jp)
+#    Created Date:  20-10-2026 20:55:17
+#    Last Modified: 20-10-2026 21:06:15
 #
 
 
@@ -22,8 +22,7 @@ set script_file [file tail [info script]]
 proc print_help {} {
 	variable script_file
 	puts "\nDescription:"
-	puts "This script creates a template Vivado project for SAKURA-X Board."
-	puts "This offers two types of project creation: one with MIG and one without MIG."
+	puts "This script creates a template Vivado project for CW305 Board."
 	puts "Syntax:"
 	puts "$script_file"
 	puts "$script_file -tclargs \[--project-dir <path>\]"
@@ -36,7 +35,6 @@ proc print_help {} {
 	puts "                         created. Default is the current directory."
 	puts "\[--project-name <name>\] Create project with the specified name. Default"
 	puts "                          name is \"proj_shell\"."
-	puts "\[--with-mig\]           Create project with MIG. Default is without MIG."
 	puts "\[--help\]               Print help information for this script"
 	puts "-------------------------------------------------------------------------\n"
 	exit 0
@@ -86,17 +84,17 @@ import_files -fileset $constr_set [file normalize [file join $scriptDir "cw305_s
 # create design
 create_bd_design $design_name
 common::send_gid_msg -ssname BD::TCL -id 2004 -severity "INFO" "Making design <$design_name> as current_bd_design."
-	 current_bd_design $design_name
+current_bd_design $design_name
 
 # check IP
 set bCheckIPsPassed 1
 set list_check_ips "\ 
-xilinx.com:ip:clk_wiz:6.0\
-tkojima.me:user:usb_interface:1.0\
-xilinx.com:ip:proc_sys_reset:5.0\
-xilinx.com:ip:xlconstant:1.1\
-xilinx.com:ip:axi_gpio:2.0\
-"
+	xilinx.com:ip:clk_wiz:6.0\
+	tkojima.me:user:usb_interface:1.0\
+	xilinx.com:ip:proc_sys_reset:5.0\
+	xilinx.com:ip:xlconstant:1.1\
+	xilinx.com:ip:axi_interconnect:2.1 \
+	xilinx.com:ip:axi_gpio:2.0"
 
 set list_ips_missing ""
 common::send_gid_msg -ssname BD::TCL -id 2011 -severity "INFO" "Checking if the following IPs exist in the project's IP catalog: $list_check_ips ."
@@ -123,21 +121,21 @@ proc create_root_design { parentCell } {
 	variable design_name
 
 	if { $parentCell eq "" } {
-		 set parentCell [get_bd_cells /]
+		set parentCell [get_bd_cells /]
 	}
 
 	# Get object for parentCell
 	set parentObj [get_bd_cells $parentCell]
 	if { $parentObj == "" } {
-		 catch {common::send_gid_msg -ssname BD::TCL -id 2090 -severity "ERROR" "Unable to find parent cell <$parentCell>!"}
-		 return
+		catch {common::send_gid_msg -ssname BD::TCL -id 2090 -severity "ERROR" "Unable to find parent cell <$parentCell>!"}
+		return
 	}
 
 	# Make sure parentObj is hier blk
 	set parentType [get_property TYPE $parentObj]
 	if { $parentType ne "hier" } {
-		 catch {common::send_gid_msg -ssname BD::TCL -id 2091 -severity "ERROR" "Parent <$parentObj> has TYPE = <$parentType>. Expected to be <hier>."}
-		 return
+		catch {common::send_gid_msg -ssname BD::TCL -id 2091 -severity "ERROR" "Parent <$parentObj> has TYPE = <$parentType>. Expected to be <hier>."}
+		return
 	}
 
 	# Save current instance; Restore later
@@ -154,13 +152,14 @@ proc create_root_design { parentCell } {
 	set USB_WR_N [ create_bd_port -dir I USB_WR_N ]
 	set USB_CE_N [ create_bd_port -dir I USB_CE_N ]
 	set USB_TRIGGER [ create_bd_port -dir I USB_TRIGGER ]
-	set TIO1 [ create_bd_port -dir O -from 0 -to 0 TIO1 ]
-	set TIO2 [ create_bd_port -dir O -from 0 -to 0 TIO2 ]
-	set TIO3 [ create_bd_port -dir O -from 0 -to 0 TIO3 ]
-	set TIO4 [ create_bd_port -dir O -from 0 -to 0 TIO4 ]
+	set CWIO_TIO1 [ create_bd_port -dir O -from 0 -to 0 CWIO_TIO1 ]
+	set CWIO_TIO2 [ create_bd_port -dir O -from 0 -to 0 CWIO_TIO2 ]
+	set CWIO_TIO3 [ create_bd_port -dir O -from 0 -to 0 CWIO_TIO3 ]
+	set CWIO_TIO4 [ create_bd_port -dir O -from 0 -to 0 CWIO_TIO4 ]
 	set USB_DATA [ create_bd_port -dir IO -from 7 -to 0 USB_DATA ]
 	set USB_ADDR [ create_bd_port -dir I -from 16 -to 0 USB_ADDR ]
-	set LED [ create_bd_port -dir O -from 2 -to 0 LED ]
+	set USR_LED [ create_bd_port -dir O -from 2 -to 0 USR_LED ]
+	set USR_DIP [ create_bd_port -dir I -from 3 -to 0 USR_DIP ]
 
 	# Create instance: pll, and set properties
 	set pll [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:6.0 pll ]
@@ -194,50 +193,99 @@ proc create_root_design { parentCell } {
 	set const_trig_ready [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 const_trig_ready ]
 
 	# Create instance: axi_gpio, and set properties
-	set axi_led [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_led ]
+	set axi_usr_dip_led [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_usr_dip_led ]
 	set_property -dict [list \
-		CONFIG.C_ALL_OUTPUTS {1} \
-		CONFIG.C_DOUT_DEFAULT {0xFFFFFFFF} \
-		CONFIG.C_GPIO_WIDTH {32} \
-	] $axi_led
+		CONFIG.C_ALL_INPUTS {1} \
+		CONFIG.C_ALL_OUTPUTS_2 {1} \
+		CONFIG.C_GPIO2_WIDTH {3} \
+		CONFIG.C_GPIO_WIDTH {4} \
+		CONFIG.C_DOUT_DEFAULT_2 {0x00000007} \
+		CONFIG.C_IS_DUAL {1} \
+	] $axi_usr_dip_led
 
 	# Create instance: usb_interface_0_axi_periph, and set properties
 	set usb_interface_0_axi_periph [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 usb_interface_0_axi_periph ]
 	set_property CONFIG.NUM_MI {1} $usb_interface_0_axi_periph
 
-	# Create instance: xlslice_0, and set properties
-	set xlslice_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_0 ]
-	set_property -dict [list \
-		CONFIG.DIN_FROM {2} \
-		CONFIG.DIN_TO {0} \
-	] $xlslice_0
-
 	# Create interface connections
-	connect_bd_intf_net -intf_net usb_interface_0_M00_AXI [get_bd_intf_pins usb_interface_0/M00_AXI] [get_bd_intf_pins usb_interface_0_axi_periph/S00_AXI]
-	connect_bd_intf_net -intf_net usb_interface_0_axi_periph_M00_AXI [get_bd_intf_pins usb_interface_0_axi_periph/M00_AXI] [get_bd_intf_pins axi_led/S_AXI]
+	connect_bd_intf_net -intf_net usb_interface_0_M00_AXI \
+		[get_bd_intf_pins usb_interface_0/M00_AXI] \
+		[get_bd_intf_pins usb_interface_0_axi_periph/S00_AXI]
+	connect_bd_intf_net -intf_net usb_interface_0_axi_periph_M00_AXI \
+		[get_bd_intf_pins usb_interface_0_axi_periph/M00_AXI] \
+		[get_bd_intf_pins axi_usr_dip_led/S_AXI]
 
 	# Create port connections
-	connect_bd_net -net Net [get_bd_ports USB_DATA] [get_bd_pins usb_interface_0/usb_data]
-	connect_bd_net -net PLL_CLK1_1 [get_bd_ports PLL_CLK1] [get_bd_pins pll/clk_in1]
-	connect_bd_net -net RESET_N_1 [get_bd_ports RESET_N] [get_bd_pins pll/resetn] [get_bd_pins rst_sys_clk/ext_reset_in] [get_bd_pins rst_usb_clk/ext_reset_in]
-	connect_bd_net -net USBCK0_1 [get_bd_ports USBCK0] [get_bd_pins rst_usb_clk/slowest_sync_clk] [get_bd_pins usb_interface_0/m00_axi_aclk] [get_bd_pins usb_interface_0_axi_periph/S00_ACLK]
-	connect_bd_net -net USB_ADDR_1 [get_bd_ports USB_ADDR] [get_bd_pins usb_interface_0/usb_addr]
-	connect_bd_net -net USB_CE_N_1 [get_bd_ports USB_CE_N] [get_bd_pins usb_interface_0/usb_ce_n]
-	connect_bd_net -net USB_RD_N_1 [get_bd_ports USB_RD_N] [get_bd_pins usb_interface_0/usb_rd_n]
-	connect_bd_net -net USB_TRIGGER_1 [get_bd_ports USB_TRIGGER] [get_bd_pins usb_interface_0/usb_trigger]
-	connect_bd_net -net USB_WR_N_1 [get_bd_ports USB_WR_N] [get_bd_pins usb_interface_0/usb_wr_n]
-	connect_bd_net -net axi_led_gpio_io_o [get_bd_pins axi_led/gpio_io_o] [get_bd_pins xlslice_0/Din]
-	connect_bd_net -net sys_clk_1 [get_bd_pins pll/clk_out1] [get_bd_pins rst_sys_clk/slowest_sync_clk] [get_bd_pins usb_interface_0/sys_clk] [get_bd_pins axi_led/s_axi_aclk] [get_bd_pins usb_interface_0_axi_periph/ACLK] [get_bd_pins usb_interface_0_axi_periph/M00_ACLK]
-	connect_bd_net -net rst_usb_clk_peripheral_aresetn [get_bd_pins rst_usb_clk/peripheral_aresetn] [get_bd_pins usb_interface_0/m00_axi_aresetn] [get_bd_pins usb_interface_0_axi_periph/S00_ARESETN]
-	connect_bd_net -net rst_sys_clk_peripheral_aresetn [get_bd_pins rst_sys_clk/peripheral_aresetn] [get_bd_pins axi_led/s_axi_aresetn] [get_bd_pins usb_interface_0_axi_periph/M00_ARESETN] [get_bd_pins usb_interface_0_axi_periph/ARESETN] [get_bd_pins usb_interface_0/sys_clk_reset_n]
-	connect_bd_net -net pll_locked [get_bd_pins pll/locked] [get_bd_pins rst_sys_clk/dcm_locked]
-	connect_bd_net -net usb_interface_0_external_trigger [get_bd_pins usb_interface_0/external_trigger]
-	connect_bd_net -net usb_interface_0_sw_reset_n [get_bd_pins usb_interface_0/sw_reset_n] [get_bd_pins rst_sys_clk/aux_reset_in]
-	connect_bd_net -net fixed_ready_signal [get_bd_pins const_trig_ready/dout] [get_bd_pins usb_interface_0/trigger_ready]
-	connect_bd_net -net xlslice_0_Dout [get_bd_pins xlslice_0/Dout] [get_bd_ports LED]
+	connect_bd_net -net net_usb_data \
+		[get_bd_ports USB_DATA] \
+		[get_bd_pins usb_interface_0/usb_data]
+	connect_bd_net -net net_pll_clk1 \
+		[get_bd_ports PLL_CLK1] \
+		[get_bd_pins pll/clk_in1]
+	connect_bd_net -net net_reset_n \
+		[get_bd_ports RESET_N] \
+		[get_bd_pins pll/resetn] \
+		[get_bd_pins rst_sys_clk/ext_reset_in] \
+		[get_bd_pins rst_usb_clk/ext_reset_in]
+	connect_bd_net -net net_usbck0 \
+		[get_bd_ports USBCK0] \
+		[get_bd_pins rst_usb_clk/slowest_sync_clk] \
+		[get_bd_pins usb_interface_0/m00_axi_aclk] \
+		[get_bd_pins usb_interface_0_axi_periph/S00_ACLK]
+	connect_bd_net -net net_usb_addr \
+		[get_bd_ports USB_ADDR] \
+		[get_bd_pins usb_interface_0/usb_addr]
+	connect_bd_net -net net_usb_ce_n \
+		[get_bd_ports USB_CE_N] \
+		[get_bd_pins usb_interface_0/usb_ce_n]
+	connect_bd_net -net net_usb_rd_n \
+		[get_bd_ports USB_RD_N] \
+		[get_bd_pins usb_interface_0/usb_rd_n]
+	connect_bd_net -net net_usb_trigger \
+		[get_bd_ports USB_TRIGGER] \
+		[get_bd_pins usb_interface_0/usb_trigger]
+	connect_bd_net -net net_usb_wr_n \
+		[get_bd_ports USB_WR_N] \
+		[get_bd_pins usb_interface_0/usb_wr_n]
+	connect_bd_net -net net_usr_dip \
+		[get_bd_ports USR_DIP] \
+		[get_bd_pins axi_usr_dip_led/gpio_io_i]
+	connect_bd_net -net net_usr_led \
+		[get_bd_pins axi_usr_dip_led/gpio2_io_o] \
+		[get_bd_ports USR_LED]
+	connect_bd_net -net net_sys_clk \
+		[get_bd_pins pll/clk_out1] \
+		[get_bd_pins rst_sys_clk/slowest_sync_clk] \
+		[get_bd_pins usb_interface_0/sys_clk] \
+		[get_bd_pins axi_usr_dip_led/s_axi_aclk] \
+		[get_bd_pins usb_interface_0_axi_periph/ACLK] \
+		[get_bd_pins usb_interface_0_axi_periph/M00_ACLK]
+	connect_bd_net -net net_rst_usb_clk_peripheral_aresetn \
+		[get_bd_pins rst_usb_clk/peripheral_aresetn] \
+		[get_bd_pins usb_interface_0/m00_axi_aresetn] \
+		[get_bd_pins usb_interface_0_axi_periph/S00_ARESETN]
+	connect_bd_net -net net_rst_sys_clk_peripheral_aresetn \
+		[get_bd_pins rst_sys_clk/peripheral_aresetn] \
+		[get_bd_pins axi_usr_dip_led/s_axi_aresetn] \
+		[get_bd_pins usb_interface_0_axi_periph/M00_ARESETN] \
+		[get_bd_pins usb_interface_0_axi_periph/ARESETN] \
+		[get_bd_pins usb_interface_0/sys_clk_reset_n]
+	connect_bd_net -net net_pll_locked [get_bd_pins pll/locked] \
+		[get_bd_pins rst_sys_clk/dcm_locked]
+	connect_bd_net -net net_usb_interface_0_external_trigger \
+		[get_bd_pins usb_interface_0/external_trigger]
+	connect_bd_net -net net_usb_interface_0_sw_reset_n \
+		[get_bd_pins usb_interface_0/sw_reset_n] \
+		[get_bd_pins rst_sys_clk/aux_reset_in]
+	connect_bd_net -net net_fixed_ready_signal \
+		[get_bd_pins const_trig_ready/dout] \
+		[get_bd_pins usb_interface_0/trigger_ready]
+
 
 	# Create address segments
-	assign_bd_address -offset 0xC0000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces usb_interface_0/M00_AXI] [get_bd_addr_segs axi_led/S_AXI/Reg] -force
+	assign_bd_address -offset 0xC0000000 -range 0x00010000 -target_address_space \
+		[get_bd_addr_spaces usb_interface_0/M00_AXI] \
+		[get_bd_addr_segs axi_usr_dip_led/S_AXI/Reg] -force
 
 	# Restore current instance
 	current_bd_instance $oldCurInst
