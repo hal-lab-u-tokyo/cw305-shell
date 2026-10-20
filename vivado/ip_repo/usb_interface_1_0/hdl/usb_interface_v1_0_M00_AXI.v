@@ -1,18 +1,18 @@
 //
-//    Copyright (C) 2025 The University of Tokyo
+//    Copyright (C) 2026 University of Tsukuba
 //    
-//    File:          /vivado/ip_repo/usb_interface_1_0/hdl/usb_interface_v1_0_M00_AXI.v
-//    Project:       cw305-shell
-//    Author:        Takuya Kojima in The University of Tokyo (tkojima@hal.ipc.i.u-tokyo.ac.jp)
-//    Created Date:  23-01-2025 07:01:59
-//    Last Modified: 24-01-2025 04:40:09
+//    File:          /ip_repo/usb_interface_1_0/hdl/usb_interface_v1_0_M00_AXI.v
+//    Project:       cw310-sandbox
+//    Author:        Takuya Kojima in University of Tsukuba (tkojima@lila.cs.tsukuba.ac.jp)
+//    Created Date:  17-10-2026 18:28:32
+//    Last Modified: 19-10-2026 18:16:36
 //
+
 
 
 `timescale 1 ns / 1 ps
 
 `include "def.v"
-`define PULP_CELL
 
 	module usb_interface_v1_0_M00_AXI #
 	(
@@ -109,7 +109,7 @@
 	// write transaction
 	reg r_axi_awvalid, r_axi_wvalid, r_axi_bready;
 	// read transaction
-	reg r_axi_arvalid, r_axi_rready;
+	reg r_axi_arvalid;
 	//write address
 	reg [C_M_AXI_ADDR_WIDTH-1 : 0] 	r_axi_awaddr;
 	//write data
@@ -121,16 +121,13 @@
 	reg [C_M_AXI_DATA_WIDTH-1 : 0] r_read_data;
 	reg r_rvalid;
 	reg r_read_req, r_read_req_delayed;
-	reg r_write_valid, r_write_valid_delayed;
-	
-	// write ready control
-	reg r_axi_awready, r_axi_wready;
+	reg r_write_busy;
 
-	// edge detection for read and write requests
+	// edge detection for read requests
 	wire w_raise_read_req;
-	wire w_raise_write_valid;
 	assign w_raise_read_req = r_read_req && ~r_read_req_delayed;
-	assign w_raise_write_valid = r_write_valid && ~r_write_valid_delayed;
+	wire w_write_done;
+	assign w_write_done = r_write_busy && M_AXI_BVALID && r_axi_bready;
 
 	//Adding the offset address to the base addr of the slave
 	assign M_AXI_AWADDR	= C_M_TARGET_SLAVE_BASE_ADDR + r_axi_awaddr;
@@ -153,130 +150,51 @@
 
 
 	// output to command controller
-	assign o_write_ready = r_axi_awready && r_axi_wready;
+	assign o_write_ready = w_write_done;
 	assign o_read_data_valid = r_rvalid;
 	assign o_read_data = r_read_data;
 
 
-	// latch the request signals
+	// latch the read request signals
 	always @(posedge M_AXI_ACLK) begin
 		if (M_AXI_ARESETN == 0) begin
 			r_read_req <= 0;
 			r_read_req_delayed <= 0;
-			r_write_valid <= 0;
-			r_write_valid_delayed <= 0;
 		end else begin
 			r_read_req <= i_read_req;
 			r_read_req_delayed <= r_read_req;
-			r_write_valid <= i_write_valid;
-			r_write_valid_delayed <= r_write_valid;
 		end
 	end
 
-	//--------------------
-	//Write Address Channel
-	//--------------------
-
-	// The purpose of the write address channel is to request the address and
-	// command information for the entire transaction.  It is a single beat
-	// of information.
-
-	// Note for this example the axi_awvalid/axi_wvalid are asserted at the same
-	// time, and then each is deasserted independent from each other.
-	// This is a lower-performance, but simplier control scheme.
-
-	// AXI VALID signals must be held active until accepted by the partner.
-
-	// A data transfer is accepted by the slave when a master has
-	// VALID data and the slave acknoledges it is also READY. While the master
-	// is allowed to generated multiple, back-to-back requests by not
-	// deasserting VALID, this design will add rest cycle for
-	// simplicity.
-
-	// Since only one outstanding transaction is issued by the user design,
-	// there will not be a collision between a new request and an accepted
-	// request on the same clock cycle.
-
+	//-------------------------
+	//Write Transaction control
+	//------------------------
 	always @(posedge M_AXI_ACLK) begin
-		//Only VALID signals must be deasserted during reset per AXI spec
-		//Consider inverting then registering active-low reset for higher fmax
-		if (M_AXI_ARESETN == 0) begin
+		if (!M_AXI_ARESETN) begin
+			r_write_busy  <= 1'b0;
 			r_axi_awvalid <= 1'b0;
-		end else begin
-			if (w_raise_write_valid) begin
+			r_axi_wvalid  <= 1'b0;
+			r_axi_bready  <= 1'b0;
+			r_axi_awaddr  <= 0;
+			r_axi_wdata   <= C_M_START_DATA_VALUE;
+		end else if (!r_write_busy) begin
+			if (i_write_valid) begin
+				r_axi_awaddr  <= i_addr;
+				r_axi_wdata   <= i_write_data;
 				r_axi_awvalid <= 1'b1;
-			end else if (M_AXI_AWREADY && r_axi_awvalid) begin
-				//Address accepted by interconnect/slave (issue of M_AXI_AWREADY by slave)
-				r_axi_awvalid <= 1'b0;
+				r_axi_wvalid  <= 1'b1;
+				r_axi_bready  <= 1'b1;
+				r_write_busy  <= 1'b1;
 			end
-		end
-	end
-
-	//--------------------
-	//Write Data Channel
-	//--------------------
-
-	//The write data channel is for transfering the actual data.
-	//The data generation is speific to the example design, and
-	//so only the WVALID/WREADY handshake is shown here
-
-	always @(posedge M_AXI_ACLK) begin
-		if (M_AXI_ARESETN == 0) begin
-			r_axi_wvalid <= 1'b0;
-		end else if (w_raise_write_valid) begin
-			//Signal a new address/data command is available by user logic
-			r_axi_wvalid <= 1'b1;
- 		end else if (M_AXI_WREADY && r_axi_wvalid) begin
-			//Data accepted by interconnect/slave (issue of M_AXI_WREADY by slave)
-			r_axi_wvalid <= 1'b0;
-		end
-	end
-
-	// Write Ready control
-	always @(posedge M_AXI_ACLK) begin
-		if (M_AXI_ARESETN == 0) begin
-			r_axi_awready <= 1'b0;
-			r_axi_wready <= 1'b0;
 		end else begin
-			if (r_axi_awready && r_axi_wready) begin
-				r_axi_awready <= 1'b0;
-				r_axi_wready <= 1'b0;
-			end else begin
-				if (M_AXI_AWREADY) begin
-					r_axi_awready <= 1'b1;
-				end
-				if (M_AXI_WREADY) begin
-					r_axi_wready <= 1'b1;
-				end
+			if (r_axi_awvalid && M_AXI_AWREADY)
+				r_axi_awvalid <= 1'b0;
+			if (r_axi_wvalid && M_AXI_WREADY)
+				r_axi_wvalid <= 1'b0;
+			if (w_write_done) begin
+				r_axi_bready <= 1'b0;
+				r_write_busy <= 1'b0;
 			end
-		end
-	end
-
-	//----------------------------
-	//Write Response (B) Channel
-	//----------------------------
-
-	//The write response channel provides feedback that the write has committed
-	//to memory. BREADY will occur after both the data and the write address
-	//has arrived and been accepted by the slave, and can guarantee that no
-	//other accesses launched afterwards will be able to be reordered before it.
-
-	//The BRESP bit [1] is used indicate any errors from the interconnect or
-	//slave for the entire write burst. This example will capture the error.
-
-	//While not necessary per spec, it is advisable to reset READY signals in
-	//case of differing reset latencies between master/slave.
-
-	always @(posedge M_AXI_ACLK) begin
-		if (M_AXI_ARESETN == 0) begin
-			r_axi_bready <= 1'b0;
-		end else if (M_AXI_BVALID && ~r_axi_bready) begin
-			// accept/acknowledge bresp with r_axi_bready by the master
-			// when M_AXI_BVALID is asserted by slave
-			r_axi_bready <= 1'b1;
-		end else if (r_axi_bready) begin
-		// deassert after one clock cycle
-			r_axi_bready <= 1'b0;
 		end
 	end
 
@@ -318,35 +236,13 @@
 			r_read_data <= 0;
 			r_rvalid <= 0;
 		end else begin
-			r_rvalid <= M_AXI_RVALID;
-			if (M_AXI_RVALID) begin
+			r_rvalid <= M_AXI_RVALID && M_AXI_RREADY;
+			if (M_AXI_RVALID && M_AXI_RREADY) begin
 				r_read_data <= M_AXI_RDATA;
 			end
 		end
 	end
 
-
-	//Address/data pairs for this example. The read and write values should
-	//match.
-	//Modify these as desired for different address patterns.
-
-	// Write address
-	always @(posedge M_AXI_ACLK) begin
-		if (M_AXI_ARESETN == 0) begin
-			r_axi_awaddr <= 0;
-		end else if (w_raise_write_valid) begin
-			r_axi_awaddr <= i_addr;
-		end
-	end
-
-	// Write data
-	always @(posedge M_AXI_ACLK) begin
-		if (M_AXI_ARESETN == 0) begin
-			r_axi_wdata <= C_M_START_DATA_VALUE;
-		end else if (w_raise_write_valid) begin
-			r_axi_wdata <= i_write_data;
-		end
-	end
 
 	//Read Addresses
 	always @(posedge M_AXI_ACLK) begin
