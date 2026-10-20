@@ -1,7 +1,7 @@
 # CW305 Shell
 
 This repository provides a shell template for NewAE CW305 FPGA.
-Vivado 2023.2 was used to verify the design.
+Vivado 2025.2 was used to verify the design.
 
 ## Overview
 
@@ -123,3 +123,4 @@ This repository is licensed under MIT License, see [LICENSE](LICENSE) for more i
 
 ## Similar projects
 * [SAKURA-X shell](https://github.com/hal-lab-u-tokyo/sakura-x-shell/) - A shell template for SAKURA-X FPGA
+* [CW310 shell](https://github.com/lila-tsukuba/cw310-shell) - A shell template for CW310 Bergen Board

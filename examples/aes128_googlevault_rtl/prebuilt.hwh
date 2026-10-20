@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Sat Mar 15 14:46:01 2025" VIVADOVERSION="2023.2_AR000036820">
+<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Tue Oct 20 21:54:56 2026" VIVADOVERSION="2025.2">
 
   <SYSTEMINFO ARCH="artix7" DEVICE="7a100t" NAME="main" PACKAGE="ftg256" SPEEDGRADE="-2"/>
 
   <EXTERNALPORTS>
-    <PORT DIR="O" LEFT="2" NAME="LED" RIGHT="0" SIGIS="undef" SIGNAME="xlslice_0_Dout">
+    <PORT DIR="O" LEFT="0" NAME="CWIO_TIO1" RIGHT="0" SIGIS="undef"/>
+    <PORT DIR="O" LEFT="0" NAME="CWIO_TIO2" RIGHT="0" SIGIS="undef"/>
+    <PORT DIR="O" LEFT="0" NAME="CWIO_TIO3" RIGHT="0" SIGIS="undef"/>
+    <PORT DIR="O" LEFT="0" NAME="CWIO_TIO4" RIGHT="0" SIGIS="undef" SIGNAME="aes_rtl_core_0_o_running">
       <CONNECTIONS>
-        <CONNECTION INSTANCE="xlslice_0" PORT="Dout"/>
+        <CONNECTION INSTANCE="aes_rtl_core_0" PORT="o_running"/>
       </CONNECTIONS>
     </PORT>
     <PORT CLKFREQUENCY="100000000" DIR="I" NAME="PLL_CLK1" SIGIS="clk" SIGNAME="External_Ports_PLL_CLK1">
@@ -19,14 +22,6 @@
         <CONNECTION INSTANCE="pll" PORT="resetn"/>
         <CONNECTION INSTANCE="rst_sys_clk" PORT="ext_reset_in"/>
         <CONNECTION INSTANCE="rst_usb_clk" PORT="ext_reset_in"/>
-      </CONNECTIONS>
-    </PORT>
-    <PORT DIR="O" LEFT="0" NAME="TIO1" RIGHT="0" SIGIS="undef"/>
-    <PORT DIR="O" LEFT="0" NAME="TIO2" RIGHT="0" SIGIS="undef"/>
-    <PORT DIR="O" LEFT="0" NAME="TIO3" RIGHT="0" SIGIS="undef"/>
-    <PORT DIR="O" LEFT="0" NAME="TIO4" RIGHT="0" SIGIS="undef" SIGNAME="aes_rtl_core_0_o_running">
-      <CONNECTIONS>
-        <CONNECTION INSTANCE="aes_rtl_core_0" PORT="o_running"/>
       </CONNECTIONS>
     </PORT>
     <PORT CLKFREQUENCY="96000000" DIR="I" NAME="USBCK0" SIGIS="clk" SIGNAME="External_Ports_USBCK0">
@@ -66,6 +61,16 @@
         <CONNECTION INSTANCE="usb_interface_0" PORT="usb_wr_n"/>
       </CONNECTIONS>
     </PORT>
+    <PORT DIR="I" LEFT="3" NAME="USR_DIP" RIGHT="0" SIGIS="undef" SIGNAME="External_Ports_USR_DIP">
+      <CONNECTIONS>
+        <CONNECTION INSTANCE="axi_usr_dip_led" PORT="gpio_io_i"/>
+      </CONNECTIONS>
+    </PORT>
+    <PORT DIR="O" LEFT="2" NAME="USR_LED" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_gpio2_io_o">
+      <CONNECTIONS>
+        <CONNECTION INSTANCE="axi_usr_dip_led" PORT="gpio2_io_o"/>
+      </CONNECTIONS>
+    </PORT>
   </EXTERNALPORTS>
 
   <EXTERNALINTERFACES/>
@@ -93,7 +98,7 @@
         </PORT>
         <PORT DIR="O" NAME="o_running" SIGIS="undef" SIGNAME="aes_rtl_core_0_o_running">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="External_Ports" PORT="TIO4"/>
+            <CONNECTION INSTANCE="External_Ports" PORT="CWIO_TIO4"/>
           </CONNECTIONS>
         </PORT>
         <PORT CLKFREQUENCY="20000000" DIR="I" NAME="s_axi_aclk" SIGIS="clk" SIGNAME="pll_clk_out1">
@@ -223,9 +228,9 @@
           <PARAMETER NAME="ID_WIDTH" VALUE="0"/>
           <PARAMETER NAME="INSERT_VIP" VALUE="0"/>
           <PARAMETER NAME="MAX_BURST_LENGTH" VALUE="1"/>
-          <PARAMETER NAME="NUM_READ_OUTSTANDING" VALUE="2"/>
+          <PARAMETER NAME="NUM_READ_OUTSTANDING" VALUE="1"/>
           <PARAMETER NAME="NUM_READ_THREADS" VALUE="1"/>
-          <PARAMETER NAME="NUM_WRITE_OUTSTANDING" VALUE="2"/>
+          <PARAMETER NAME="NUM_WRITE_OUTSTANDING" VALUE="1"/>
           <PARAMETER NAME="NUM_WRITE_THREADS" VALUE="1"/>
           <PARAMETER NAME="PHASE" VALUE="0.0"/>
           <PARAMETER NAME="PROTOCOL" VALUE="AXI4LITE"/>
@@ -261,7 +266,7 @@
         </BUSINTERFACE>
       </BUSINTERFACES>
     </MODULE>
-    <MODULE COREREVISION="31" FULLNAME="/axi_led" HWVERSION="2.0" INSTANCE="axi_led" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="axi_gpio" VLNV="xilinx.com:ip:axi_gpio:2.0">
+    <MODULE COREREVISION="37" FULLNAME="/axi_usr_dip_led" HWVERSION="2.0" INSTANCE="axi_usr_dip_led" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="axi_gpio" VLNV="xilinx.com:ip:axi_gpio:2.0">
       <DOCUMENTS>
         <DOCUMENT SOURCE="http://www.xilinx.com/cgi-bin/docs/ipdoc?c=axi_gpio;v=v2_0;d=pg144-axi-gpio.pdf"/>
       </DOCUMENTS>
@@ -271,12 +276,12 @@
             <REGISTER NAME="GPIO_DATA">
               <PROPERTY NAME="DESCRIPTION" VALUE="Channel-1 AXI GPIO Data register"/>
               <PROPERTY NAME="ADDRESS_OFFSET" VALUE="0x0"/>
-              <PROPERTY NAME="SIZE" VALUE="32"/>
+              <PROPERTY NAME="SIZE" VALUE="4"/>
               <PROPERTY NAME="ACCESS" VALUE="read-write"/>
               <PROPERTY NAME="IS_ENABLED" VALUE="true"/>
               <PROPERTY NAME="RESET_VALUE" VALUE="0x0"/>
               <FIELDS>
-                <FIELD NAME="Channel_1_GPIO_DATA">
+                <FIELD NAME="CH1_DATA">
                   <PROPERTY NAME="DESCRIPTION" VALUE="AXI GPIO Data Register.&#xA;For each I/O bit programmed as input&#xA;  R - Reads value on the input pin.&#xA;  W - No effect.&#xA;For each I/O bit programmed as output&#xA;  R - Reads value on GPIO_O pins&#xA;  W - Writes value to the corresponding AXI GPIO &#xA;      data register bit and output pin&#xA;"/>
                   <PROPERTY NAME="ADDRESS_OFFSET" VALUE="0"/>
                   <PROPERTY NAME="ACCESS" VALUE="read-write"/>
@@ -284,19 +289,19 @@
                   <PROPERTY NAME="WRITE_CONSTRAINT" VALUE="0"/>
                   <PROPERTY NAME="READ_ACTION" VALUE=""/>
                   <PROPERTY NAME="BIT_OFFSET" VALUE="0"/>
-                  <PROPERTY NAME="BIT_WIDTH" VALUE="32"/>
+                  <PROPERTY NAME="BIT_WIDTH" VALUE="4"/>
                 </FIELD>
               </FIELDS>
             </REGISTER>
             <REGISTER NAME="GPIO_TRI">
               <PROPERTY NAME="DESCRIPTION" VALUE="Channel-1 AXI GPIO 3-State Control register"/>
               <PROPERTY NAME="ADDRESS_OFFSET" VALUE="0x4"/>
-              <PROPERTY NAME="SIZE" VALUE="32"/>
+              <PROPERTY NAME="SIZE" VALUE="4"/>
               <PROPERTY NAME="ACCESS" VALUE="read-write"/>
               <PROPERTY NAME="IS_ENABLED" VALUE="true"/>
               <PROPERTY NAME="RESET_VALUE" VALUE="0x0"/>
               <FIELDS>
-                <FIELD NAME="Channel_1_GPIO_TRI">
+                <FIELD NAME="CH1_TRI">
                   <PROPERTY NAME="DESCRIPTION" VALUE="AXI GPIO 3-State Control Register&#xA;Each I/O pin of the AXI GPIO is individually programmable as an input or output   For each of the bits     0 - I/O pin configured as output     1 - I/O pin configured as input&#xA;"/>
                   <PROPERTY NAME="ADDRESS_OFFSET" VALUE="0"/>
                   <PROPERTY NAME="ACCESS" VALUE="read-write"/>
@@ -304,19 +309,19 @@
                   <PROPERTY NAME="WRITE_CONSTRAINT" VALUE="0"/>
                   <PROPERTY NAME="READ_ACTION" VALUE=""/>
                   <PROPERTY NAME="BIT_OFFSET" VALUE="0"/>
-                  <PROPERTY NAME="BIT_WIDTH" VALUE="32"/>
+                  <PROPERTY NAME="BIT_WIDTH" VALUE="4"/>
                 </FIELD>
               </FIELDS>
             </REGISTER>
             <REGISTER NAME="GPIO2_DATA">
               <PROPERTY NAME="DESCRIPTION" VALUE="Channel-2 AXI GPIO Data register"/>
               <PROPERTY NAME="ADDRESS_OFFSET" VALUE="0x8"/>
-              <PROPERTY NAME="SIZE" VALUE="32"/>
+              <PROPERTY NAME="SIZE" VALUE="3"/>
               <PROPERTY NAME="ACCESS" VALUE="read-write"/>
               <PROPERTY NAME="IS_ENABLED" VALUE="true"/>
               <PROPERTY NAME="RESET_VALUE" VALUE="0x0"/>
               <FIELDS>
-                <FIELD NAME="Channel_2_GPIO_DATA">
+                <FIELD NAME="CH2_DATA">
                   <PROPERTY NAME="DESCRIPTION" VALUE="AXI GPIO Data Register.&#xA;For each I/O bit programmed as input&#xA;  R - Reads value on the input pin.&#xA;  W - No effect.&#xA;For each I/O bit programmed as output&#xA;  R - Reads value on GPIO_O pins&#xA;  W - Writes value to the corresponding AXI GPIO &#xA;      data register bit and output pin&#xA;"/>
                   <PROPERTY NAME="ADDRESS_OFFSET" VALUE="0"/>
                   <PROPERTY NAME="ACCESS" VALUE="read-write"/>
@@ -324,19 +329,19 @@
                   <PROPERTY NAME="WRITE_CONSTRAINT" VALUE="0"/>
                   <PROPERTY NAME="READ_ACTION" VALUE=""/>
                   <PROPERTY NAME="BIT_OFFSET" VALUE="0"/>
-                  <PROPERTY NAME="BIT_WIDTH" VALUE="32"/>
+                  <PROPERTY NAME="BIT_WIDTH" VALUE="3"/>
                 </FIELD>
               </FIELDS>
             </REGISTER>
             <REGISTER NAME="GPIO2_TRI">
               <PROPERTY NAME="DESCRIPTION" VALUE="Channel-2 AXI GPIO 3-State Control register"/>
               <PROPERTY NAME="ADDRESS_OFFSET" VALUE="0xC"/>
-              <PROPERTY NAME="SIZE" VALUE="32"/>
+              <PROPERTY NAME="SIZE" VALUE="3"/>
               <PROPERTY NAME="ACCESS" VALUE="read-write"/>
               <PROPERTY NAME="IS_ENABLED" VALUE="true"/>
               <PROPERTY NAME="RESET_VALUE" VALUE="0x0"/>
               <FIELDS>
-                <FIELD NAME="Channel_2_GPIO_TRI">
+                <FIELD NAME="CH2_TRI">
                   <PROPERTY NAME="DESCRIPTION" VALUE="AXI GPIO 3-State Control Register&#xA;Each I/O pin of the AXI GPIO is individually programmable as an input or output   For each of the bits     0 - I/O pin configured as output     1 - I/O pin configured as input&#xA;"/>
                   <PROPERTY NAME="ADDRESS_OFFSET" VALUE="0"/>
                   <PROPERTY NAME="ACCESS" VALUE="read-write"/>
@@ -344,7 +349,7 @@
                   <PROPERTY NAME="WRITE_CONSTRAINT" VALUE="0"/>
                   <PROPERTY NAME="READ_ACTION" VALUE=""/>
                   <PROPERTY NAME="BIT_OFFSET" VALUE="0"/>
-                  <PROPERTY NAME="BIT_WIDTH" VALUE="32"/>
+                  <PROPERTY NAME="BIT_WIDTH" VALUE="3"/>
                 </FIELD>
               </FIELDS>
             </REGISTER>
@@ -356,7 +361,7 @@
               <PROPERTY NAME="IS_ENABLED" VALUE="true"/>
               <PROPERTY NAME="RESET_VALUE" VALUE="0x0"/>
               <FIELDS>
-                <FIELD NAME="Global_Interrupt_Enable">
+                <FIELD NAME="INT_EN">
                   <PROPERTY NAME="DESCRIPTION" VALUE="Master enable for the device interrupt output&#xA;  0 - Disabled&#xA;  1 - Enabled&#xA;"/>
                   <PROPERTY NAME="ADDRESS_OFFSET" VALUE="31"/>
                   <PROPERTY NAME="ACCESS" VALUE="read-write"/>
@@ -376,7 +381,7 @@
               <PROPERTY NAME="IS_ENABLED" VALUE="true"/>
               <PROPERTY NAME="RESET_VALUE" VALUE="0x0"/>
               <FIELDS>
-                <FIELD NAME="Channel_1_Interrupt_Enable">
+                <FIELD NAME="CH1_INT_EN">
                   <PROPERTY NAME="DESCRIPTION" VALUE="Enable Channel 1 Interrupt&#xA;  0 - Disabled (masked)&#xA;  1 - Enabled&#xA;"/>
                   <PROPERTY NAME="ADDRESS_OFFSET" VALUE="0"/>
                   <PROPERTY NAME="ACCESS" VALUE="read-write"/>
@@ -386,7 +391,7 @@
                   <PROPERTY NAME="BIT_OFFSET" VALUE="0"/>
                   <PROPERTY NAME="BIT_WIDTH" VALUE="1"/>
                 </FIELD>
-                <FIELD NAME="Channel_2_Interrupt_Enable">
+                <FIELD NAME="CH2_INT_EN">
                   <PROPERTY NAME="DESCRIPTION" VALUE="Enable Channel 2 Interrupt&#xA;  0 - Disabled (masked)&#xA;  1 - Enabled&#xA;"/>
                   <PROPERTY NAME="ADDRESS_OFFSET" VALUE="1"/>
                   <PROPERTY NAME="ACCESS" VALUE="read-write"/>
@@ -406,7 +411,7 @@
               <PROPERTY NAME="IS_ENABLED" VALUE="true"/>
               <PROPERTY NAME="RESET_VALUE" VALUE="0x0"/>
               <FIELDS>
-                <FIELD NAME="Channel_1_Interrupt_Status">
+                <FIELD NAME="CH1_INT_S">
                   <PROPERTY NAME="DESCRIPTION" VALUE="Channel 1 Interrupt Status&#xA;  0 - No Channel 1 input interrupt&#xA;  1 - Channel 1 input interrupt&#xA;"/>
                   <PROPERTY NAME="ADDRESS_OFFSET" VALUE="0"/>
                   <PROPERTY NAME="ACCESS" VALUE="read-write"/>
@@ -416,7 +421,7 @@
                   <PROPERTY NAME="BIT_OFFSET" VALUE="0"/>
                   <PROPERTY NAME="BIT_WIDTH" VALUE="1"/>
                 </FIELD>
-                <FIELD NAME="Channel_2_Interrupt_Status">
+                <FIELD NAME="CH2_INT_S">
                   <PROPERTY NAME="DESCRIPTION" VALUE="Channel 2 Interrupt Status&#xA;  0 - No Channel 2 input interrupt&#xA;  1 - Channel 2 input interrupt&#xA;"/>
                   <PROPERTY NAME="ADDRESS_OFFSET" VALUE="1"/>
                   <PROPERTY NAME="ACCESS" VALUE="read-write"/>
@@ -432,22 +437,22 @@
         </ADDRESSBLOCK>
       </ADDRESSBLOCKS>
       <PARAMETERS>
-        <PARAMETER NAME="C_ALL_INPUTS" VALUE="0"/>
+        <PARAMETER NAME="C_ALL_INPUTS" VALUE="1"/>
         <PARAMETER NAME="C_ALL_INPUTS_2" VALUE="0"/>
-        <PARAMETER NAME="C_ALL_OUTPUTS" VALUE="1"/>
-        <PARAMETER NAME="C_ALL_OUTPUTS_2" VALUE="0"/>
-        <PARAMETER NAME="C_DOUT_DEFAULT" VALUE="0xFFFFFFFF"/>
-        <PARAMETER NAME="C_DOUT_DEFAULT_2" VALUE="0x00000000"/>
+        <PARAMETER NAME="C_ALL_OUTPUTS" VALUE="0"/>
+        <PARAMETER NAME="C_ALL_OUTPUTS_2" VALUE="1"/>
+        <PARAMETER NAME="C_DOUT_DEFAULT" VALUE="0x00000000"/>
+        <PARAMETER NAME="C_DOUT_DEFAULT_2" VALUE="0x00000007"/>
         <PARAMETER NAME="C_FAMILY" VALUE="artix7"/>
-        <PARAMETER NAME="C_GPIO2_WIDTH" VALUE="32"/>
-        <PARAMETER NAME="C_GPIO_WIDTH" VALUE="32"/>
+        <PARAMETER NAME="C_GPIO2_WIDTH" VALUE="3"/>
+        <PARAMETER NAME="C_GPIO_WIDTH" VALUE="4"/>
         <PARAMETER NAME="C_INTERRUPT_PRESENT" VALUE="0"/>
-        <PARAMETER NAME="C_IS_DUAL" VALUE="0"/>
+        <PARAMETER NAME="C_IS_DUAL" VALUE="1"/>
         <PARAMETER NAME="C_S_AXI_ADDR_WIDTH" VALUE="9"/>
         <PARAMETER NAME="C_S_AXI_DATA_WIDTH" VALUE="32"/>
         <PARAMETER NAME="C_TRI_DEFAULT" VALUE="0xFFFFFFFF"/>
         <PARAMETER NAME="C_TRI_DEFAULT_2" VALUE="0xFFFFFFFF"/>
-        <PARAMETER NAME="Component_Name" VALUE="main_axi_led_0"/>
+        <PARAMETER NAME="Component_Name" VALUE="main_axi_usr_dip_led_0"/>
         <PARAMETER NAME="GPIO2_BOARD_INTERFACE" VALUE="Custom"/>
         <PARAMETER NAME="GPIO_BOARD_INTERFACE" VALUE="Custom"/>
         <PARAMETER NAME="USE_BOARD_FLOW" VALUE="false"/>
@@ -456,9 +461,14 @@
         <PARAMETER NAME="C_HIGHADDR" VALUE="0xC000FFFF"/>
       </PARAMETERS>
       <PORTS>
-        <PORT DIR="O" LEFT="31" NAME="gpio_io_o" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_gpio_io_o">
+        <PORT DIR="O" LEFT="2" NAME="gpio2_io_o" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_gpio2_io_o">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="xlslice_0" PORT="Din"/>
+            <CONNECTION INSTANCE="External_Ports" PORT="USR_LED"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" LEFT="3" NAME="gpio_io_i" RIGHT="0" SIGIS="undef" SIGNAME="External_Ports_USR_DIP">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="External_Ports" PORT="USR_DIP"/>
           </CONNECTIONS>
         </PORT>
         <PORT CLKFREQUENCY="20000000" DIR="I" NAME="s_axi_aclk" SIGIS="clk" SIGNAME="pll_clk_out1">
@@ -466,7 +476,7 @@
             <CONNECTION INSTANCE="pll" PORT="clk_out1"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="8" NAME="s_axi_araddr" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_araddr">
+        <PORT DIR="I" LEFT="8" NAME="s_axi_araddr" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_araddr">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_araddr"/>
           </CONNECTIONS>
@@ -476,82 +486,82 @@
             <CONNECTION INSTANCE="rst_sys_clk" PORT="peripheral_aresetn"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" NAME="s_axi_arready" SIGIS="undef" SIGNAME="axi_led_s_axi_arready">
+        <PORT DIR="O" NAME="s_axi_arready" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_arready">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_arready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="s_axi_arvalid" SIGIS="undef" SIGNAME="axi_led_s_axi_arvalid">
+        <PORT DIR="I" NAME="s_axi_arvalid" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_arvalid">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_arvalid"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="8" NAME="s_axi_awaddr" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_awaddr">
+        <PORT DIR="I" LEFT="8" NAME="s_axi_awaddr" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_awaddr">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_awaddr"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" NAME="s_axi_awready" SIGIS="undef" SIGNAME="axi_led_s_axi_awready">
+        <PORT DIR="O" NAME="s_axi_awready" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_awready">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_awready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="s_axi_awvalid" SIGIS="undef" SIGNAME="axi_led_s_axi_awvalid">
+        <PORT DIR="I" NAME="s_axi_awvalid" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_awvalid">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_awvalid"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="s_axi_bready" SIGIS="undef" SIGNAME="axi_led_s_axi_bready">
+        <PORT DIR="I" NAME="s_axi_bready" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_bready">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_bready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="1" NAME="s_axi_bresp" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_bresp">
+        <PORT DIR="O" LEFT="1" NAME="s_axi_bresp" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_bresp">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_bresp"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" NAME="s_axi_bvalid" SIGIS="undef" SIGNAME="axi_led_s_axi_bvalid">
+        <PORT DIR="O" NAME="s_axi_bvalid" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_bvalid">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_bvalid"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="31" NAME="s_axi_rdata" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_rdata">
+        <PORT DIR="O" LEFT="31" NAME="s_axi_rdata" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_rdata">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_rdata"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="s_axi_rready" SIGIS="undef" SIGNAME="axi_led_s_axi_rready">
+        <PORT DIR="I" NAME="s_axi_rready" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_rready">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_rready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="1" NAME="s_axi_rresp" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_rresp">
+        <PORT DIR="O" LEFT="1" NAME="s_axi_rresp" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_rresp">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_rresp"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" NAME="s_axi_rvalid" SIGIS="undef" SIGNAME="axi_led_s_axi_rvalid">
+        <PORT DIR="O" NAME="s_axi_rvalid" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_rvalid">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_rvalid"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="31" NAME="s_axi_wdata" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_wdata">
+        <PORT DIR="I" LEFT="31" NAME="s_axi_wdata" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_wdata">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_wdata"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" NAME="s_axi_wready" SIGIS="undef" SIGNAME="axi_led_s_axi_wready">
+        <PORT DIR="O" NAME="s_axi_wready" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_wready">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_wready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="3" NAME="s_axi_wstrb" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_wstrb">
+        <PORT DIR="I" LEFT="3" NAME="s_axi_wstrb" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_wstrb">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_wstrb"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="s_axi_wvalid" SIGIS="undef" SIGNAME="axi_led_s_axi_wvalid">
+        <PORT DIR="I" NAME="s_axi_wvalid" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_wvalid">
           <CONNECTIONS>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_AXI_wvalid"/>
           </CONNECTIONS>
@@ -578,9 +588,9 @@
           <PARAMETER NAME="ID_WIDTH" VALUE="0"/>
           <PARAMETER NAME="INSERT_VIP" VALUE="0"/>
           <PARAMETER NAME="MAX_BURST_LENGTH" VALUE="1"/>
-          <PARAMETER NAME="NUM_READ_OUTSTANDING" VALUE="2"/>
+          <PARAMETER NAME="NUM_READ_OUTSTANDING" VALUE="1"/>
           <PARAMETER NAME="NUM_READ_THREADS" VALUE="1"/>
-          <PARAMETER NAME="NUM_WRITE_OUTSTANDING" VALUE="2"/>
+          <PARAMETER NAME="NUM_WRITE_OUTSTANDING" VALUE="1"/>
           <PARAMETER NAME="NUM_WRITE_THREADS" VALUE="1"/>
           <PARAMETER NAME="PHASE" VALUE="0.0"/>
           <PARAMETER NAME="PROTOCOL" VALUE="AXI4LITE"/>
@@ -612,12 +622,17 @@
         </BUSINTERFACE>
         <BUSINTERFACE BUSNAME="__NOC__" NAME="GPIO" TYPE="INITIATOR" VLNV="xilinx.com:interface:gpio:1.0">
           <PORTMAPS>
-            <PORTMAP LOGICAL="TRI_O" PHYSICAL="gpio_io_o"/>
+            <PORTMAP LOGICAL="TRI_I" PHYSICAL="gpio_io_i"/>
+          </PORTMAPS>
+        </BUSINTERFACE>
+        <BUSINTERFACE BUSNAME="__NOC__" NAME="GPIO2" TYPE="INITIATOR" VLNV="xilinx.com:interface:gpio:1.0">
+          <PORTMAPS>
+            <PORTMAP LOGICAL="TRI_O" PHYSICAL="gpio2_io_o"/>
           </PORTMAPS>
         </BUSINTERFACE>
       </BUSINTERFACES>
     </MODULE>
-    <MODULE COREREVISION="8" FULLNAME="/const_trig_ready" HWVERSION="1.1" INSTANCE="const_trig_ready" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="xlconstant" VLNV="xilinx.com:ip:xlconstant:1.1">
+    <MODULE COREREVISION="10" FULLNAME="/const_trig_ready" HWVERSION="1.1" INSTANCE="const_trig_ready" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="xlconstant" VLNV="xilinx.com:ip:xlconstant:1.1">
       <DOCUMENTS/>
       <PARAMETERS>
         <PARAMETER NAME="CONST_VAL" VALUE="0x1"/>
@@ -634,7 +649,7 @@
       </PORTS>
       <BUSINTERFACES/>
     </MODULE>
-    <MODULE COREREVISION="13" FULLNAME="/pll" HWVERSION="6.0" INSTANCE="pll" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="clk_wiz" VLNV="xilinx.com:ip:clk_wiz:6.0">
+    <MODULE COREREVISION="17" FULLNAME="/pll" HWVERSION="6.0" INSTANCE="pll" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="clk_wiz" VLNV="xilinx.com:ip:clk_wiz:6.0">
       <DOCUMENTS>
         <DOCUMENT SOURCE="http://www.xilinx.com/cgi-bin/docs/ipdoc?c=clk_wiz;v=v6_0;d=pg065-clk-wiz.pdf"/>
       </DOCUMENTS>
@@ -1223,7 +1238,7 @@
           <CONNECTIONS>
             <CONNECTION INSTANCE="rst_sys_clk" PORT="slowest_sync_clk"/>
             <CONNECTION INSTANCE="usb_interface_0" PORT="sys_clk"/>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_aclk"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_aclk"/>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="ACLK"/>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_ACLK"/>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M01_ACLK"/>
@@ -1243,7 +1258,7 @@
       </PORTS>
       <BUSINTERFACES/>
     </MODULE>
-    <MODULE COREREVISION="14" FULLNAME="/rst_sys_clk" HWVERSION="5.0" INSTANCE="rst_sys_clk" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="proc_sys_reset" VLNV="xilinx.com:ip:proc_sys_reset:5.0">
+    <MODULE COREREVISION="17" FULLNAME="/rst_sys_clk" HWVERSION="5.0" INSTANCE="rst_sys_clk" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="proc_sys_reset" VLNV="xilinx.com:ip:proc_sys_reset:5.0">
       <DOCUMENTS>
         <DOCUMENT SOURCE="http://www.xilinx.com/cgi-bin/docs/ipdoc?c=proc_sys_reset;v=v5_0;d=pg164-proc-sys-reset.pdf"/>
       </DOCUMENTS>
@@ -1284,7 +1299,7 @@
         <PORT DIR="O" NAME="mb_reset" POLARITY="ACTIVE_HIGH" SIGIS="rst"/>
         <PORT DIR="O" LEFT="0" NAME="peripheral_aresetn" POLARITY="ACTIVE_LOW" RIGHT="0" SIGIS="rst" SIGNAME="rst_sys_clk_peripheral_aresetn">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_aresetn"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_aresetn"/>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="M00_ARESETN"/>
             <CONNECTION INSTANCE="usb_interface_0_axi_periph" PORT="ARESETN"/>
             <CONNECTION INSTANCE="usb_interface_0" PORT="sys_clk_reset_n"/>
@@ -1301,7 +1316,7 @@
       </PORTS>
       <BUSINTERFACES/>
     </MODULE>
-    <MODULE COREREVISION="14" FULLNAME="/rst_usb_clk" HWVERSION="5.0" INSTANCE="rst_usb_clk" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="proc_sys_reset" VLNV="xilinx.com:ip:proc_sys_reset:5.0">
+    <MODULE COREREVISION="17" FULLNAME="/rst_usb_clk" HWVERSION="5.0" INSTANCE="rst_usb_clk" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="proc_sys_reset" VLNV="xilinx.com:ip:proc_sys_reset:5.0">
       <DOCUMENTS>
         <DOCUMENT SOURCE="http://www.xilinx.com/cgi-bin/docs/ipdoc?c=proc_sys_reset;v=v5_0;d=pg164-proc-sys-reset.pdf"/>
       </DOCUMENTS>
@@ -1580,14 +1595,14 @@
       </BUSINTERFACES>
       <MEMORYMAP>
         <MEMRANGE ADDRESSBLOCK="S_AXI_reg" BASENAME="C_S_AXI_BASEADDR" BASEVALUE="0x80000000" HIGHNAME="C_S_AXI_HIGHADDR" HIGHVALUE="0x8000FFFF" INSTANCE="aes_rtl_core_0" IS_DATA="TRUE" IS_INSTRUCTION="TRUE" MASTERBUSINTERFACE="M00_AXI" MEMTYPE="REGISTER" SLAVEBUSINTERFACE="S_AXI"/>
-        <MEMRANGE ADDRESSBLOCK="Reg" BASENAME="C_BASEADDR" BASEVALUE="0xC0000000" HIGHNAME="C_HIGHADDR" HIGHVALUE="0xC000FFFF" INSTANCE="axi_led" IS_DATA="TRUE" IS_INSTRUCTION="TRUE" MASTERBUSINTERFACE="M00_AXI" MEMTYPE="REGISTER" SLAVEBUSINTERFACE="S_AXI"/>
+        <MEMRANGE ADDRESSBLOCK="Reg" BASENAME="C_BASEADDR" BASEVALUE="0xC0000000" HIGHNAME="C_HIGHADDR" HIGHVALUE="0xC000FFFF" INSTANCE="axi_usr_dip_led" IS_DATA="TRUE" IS_INSTRUCTION="TRUE" MASTERBUSINTERFACE="M00_AXI" MEMTYPE="REGISTER" SLAVEBUSINTERFACE="S_AXI"/>
       </MEMORYMAP>
       <PERIPHERALS>
         <PERIPHERAL INSTANCE="aes_rtl_core_0"/>
-        <PERIPHERAL INSTANCE="axi_led"/>
+        <PERIPHERAL INSTANCE="axi_usr_dip_led"/>
       </PERIPHERALS>
     </MODULE>
-    <MODULE COREREVISION="30" FULLNAME="/usb_interface_0_axi_periph" HWVERSION="2.1" INSTANCE="usb_interface_0_axi_periph" IPTYPE="BUS" IS_ENABLE="1" MODCLASS="BUS" MODTYPE="axi_interconnect" VLNV="xilinx.com:ip:axi_interconnect:2.1">
+    <MODULE COREREVISION="38" FULLNAME="/usb_interface_0_axi_periph" HWVERSION="2.1" INSTANCE="usb_interface_0_axi_periph" IPTYPE="BUS" IS_ENABLE="1" MODCLASS="BUS" MODTYPE="axi_interconnect" VLNV="xilinx.com:ip:axi_interconnect:2.1">
       <DOCUMENTS>
         <DOCUMENT SOURCE="http://www.xilinx.com/cgi-bin/docs/ipdoc?c=axi_interconnect;v=v2_1;d=pg059-axi-interconnect.pdf"/>
       </DOCUMENTS>
@@ -1930,89 +1945,89 @@
             <CONNECTION INSTANCE="rst_sys_clk" PORT="peripheral_aresetn"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="31" NAME="M00_AXI_araddr" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_araddr">
+        <PORT DIR="O" LEFT="31" NAME="M00_AXI_araddr" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_araddr">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_araddr"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_araddr"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="0" NAME="M00_AXI_arready" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_arready">
+        <PORT DIR="I" LEFT="0" NAME="M00_AXI_arready" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_arready">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_arready"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_arready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="0" NAME="M00_AXI_arvalid" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_arvalid">
+        <PORT DIR="O" LEFT="0" NAME="M00_AXI_arvalid" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_arvalid">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_arvalid"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_arvalid"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="31" NAME="M00_AXI_awaddr" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_awaddr">
+        <PORT DIR="O" LEFT="31" NAME="M00_AXI_awaddr" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_awaddr">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_awaddr"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_awaddr"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="0" NAME="M00_AXI_awready" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_awready">
+        <PORT DIR="I" LEFT="0" NAME="M00_AXI_awready" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_awready">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_awready"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_awready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="0" NAME="M00_AXI_awvalid" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_awvalid">
+        <PORT DIR="O" LEFT="0" NAME="M00_AXI_awvalid" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_awvalid">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_awvalid"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_awvalid"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="0" NAME="M00_AXI_bready" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_bready">
+        <PORT DIR="O" LEFT="0" NAME="M00_AXI_bready" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_bready">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_bready"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_bready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="1" NAME="M00_AXI_bresp" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_bresp">
+        <PORT DIR="I" LEFT="1" NAME="M00_AXI_bresp" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_bresp">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_bresp"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_bresp"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="0" NAME="M00_AXI_bvalid" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_bvalid">
+        <PORT DIR="I" LEFT="0" NAME="M00_AXI_bvalid" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_bvalid">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_bvalid"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_bvalid"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="31" NAME="M00_AXI_rdata" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_rdata">
+        <PORT DIR="I" LEFT="31" NAME="M00_AXI_rdata" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_rdata">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_rdata"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_rdata"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="0" NAME="M00_AXI_rready" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_rready">
+        <PORT DIR="O" LEFT="0" NAME="M00_AXI_rready" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_rready">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_rready"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_rready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="1" NAME="M00_AXI_rresp" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_rresp">
+        <PORT DIR="I" LEFT="1" NAME="M00_AXI_rresp" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_rresp">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_rresp"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_rresp"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="0" NAME="M00_AXI_rvalid" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_rvalid">
+        <PORT DIR="I" LEFT="0" NAME="M00_AXI_rvalid" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_rvalid">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_rvalid"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_rvalid"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="31" NAME="M00_AXI_wdata" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_wdata">
+        <PORT DIR="O" LEFT="31" NAME="M00_AXI_wdata" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_wdata">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_wdata"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_wdata"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="0" NAME="M00_AXI_wready" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_wready">
+        <PORT DIR="I" LEFT="0" NAME="M00_AXI_wready" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_wready">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_wready"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_wready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="3" NAME="M00_AXI_wstrb" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_wstrb">
+        <PORT DIR="O" LEFT="3" NAME="M00_AXI_wstrb" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_wstrb">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_wstrb"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_wstrb"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="0" NAME="M00_AXI_wvalid" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_s_axi_wvalid">
+        <PORT DIR="O" LEFT="0" NAME="M00_AXI_wvalid" RIGHT="0" SIGIS="undef" SIGNAME="axi_usr_dip_led_s_axi_wvalid">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="s_axi_wvalid"/>
+            <CONNECTION INSTANCE="axi_usr_dip_led" PORT="s_axi_wvalid"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="I" NAME="M01_ACLK" SIGIS="clk" SIGNAME="pll_clk_out1">
@@ -2295,30 +2310,6 @@
           </PORTMAPS>
         </BUSINTERFACE>
       </BUSINTERFACES>
-    </MODULE>
-    <MODULE COREREVISION="3" FULLNAME="/xlslice_0" HWVERSION="1.0" INSTANCE="xlslice_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="xlslice" VLNV="xilinx.com:ip:xlslice:1.0">
-      <DOCUMENTS/>
-      <PARAMETERS>
-        <PARAMETER NAME="DIN_FROM" VALUE="2"/>
-        <PARAMETER NAME="DIN_TO" VALUE="0"/>
-        <PARAMETER NAME="DIN_WIDTH" VALUE="32"/>
-        <PARAMETER NAME="Component_Name" VALUE="main_xlslice_0_0"/>
-        <PARAMETER NAME="DOUT_WIDTH" VALUE="3"/>
-        <PARAMETER NAME="EDK_IPTYPE" VALUE="PERIPHERAL"/>
-      </PARAMETERS>
-      <PORTS>
-        <PORT DIR="I" LEFT="31" NAME="Din" RIGHT="0" SIGIS="undef" SIGNAME="axi_led_gpio_io_o">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="axi_led" PORT="gpio_io_o"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="O" LEFT="2" NAME="Dout" RIGHT="0" SIGIS="undef" SIGNAME="xlslice_0_Dout">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="External_Ports" PORT="LED"/>
-          </CONNECTIONS>
-        </PORT>
-      </PORTS>
-      <BUSINTERFACES/>
     </MODULE>
   </MODULES>
 
